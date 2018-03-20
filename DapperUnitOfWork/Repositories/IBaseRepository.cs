@@ -18,6 +18,31 @@ namespace DapperUnitOfWork.Repositories
         bool IsDisposed { get; }
 
         /// <summary>
+        /// Flag indicating if LocalDbContext is disposed.  Used for testing purposes.
+        /// </summary>
+        bool IsLocalDbContextDisposed { get; }
+
+        /// <summary>
+        /// Flag indicating if OverrideDbContext is disposed.  Used for testing purposes.
+        /// </summary>
+        bool? IsOverrideDbContextDisposed { get; }
+
+        /// <summary>
+        /// Flag indicating if OverrideDbContext is null.  Used for testing purposes.
+        /// </summary>
+        bool IsOverrideDbContextNull { get; }
+
+        /// <summary>
+        /// Id of LocalDbContext.  Used for testing purposes.
+        /// </summary>
+        Guid LocalDbContextId { get; }
+
+        /// <summary>
+        /// Id of OverrideDbContext.  Used for testing purposes.
+        /// </summary>
+        Guid? OverrideDbContextId { get; }
+
+        /// <summary>
         /// Returns the concrete type of the DbContext.
         /// </summary>
         Type DbContextConcreteType { get; }

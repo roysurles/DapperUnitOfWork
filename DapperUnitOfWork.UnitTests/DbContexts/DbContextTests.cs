@@ -37,7 +37,7 @@ namespace DapperUnitOfWork.UnitTests.DbContexts
                 // Act
 
                 // Assert
-                dbcontext.IsConnectionNull.Should().Be(true);
+                dbcontext.IsConnectionNull.Should().BeTrue();
             }
         }
 
@@ -54,9 +54,9 @@ namespace DapperUnitOfWork.UnitTests.DbContexts
             dbcontext.Dispose();
 
             // Assert
-            dbcontext.IsDisposed.Should().Be(true);
+            dbcontext.IsDisposed.Should().BeTrue();
             action.Should().Throw<InvalidOperationException>();
-            dbcontext.IsTransactionNull.Should().Be(true);
+            dbcontext.IsTransactionNull.Should().BeTrue();
         }
 
         [Fact(DisplayName = "OpenConnection_ConnectionIsClosed_ConnectionIsOpen")]
@@ -202,7 +202,7 @@ namespace DapperUnitOfWork.UnitTests.DbContexts
 
                 // Assert
                 dbcontext.Connection.State.Should().Be(ConnectionState.Closed);
-                dbcontext.IsTransactionNull.Should().Be(true);
+                dbcontext.IsTransactionNull.Should().BeTrue();
             }
         }
 
@@ -220,7 +220,7 @@ namespace DapperUnitOfWork.UnitTests.DbContexts
 
                 // Assert
                 dbcontext.Connection.State.Should().Be(ConnectionState.Open);
-                dbcontext.IsTransactionNull.Should().Be(true);
+                dbcontext.IsTransactionNull.Should().BeTrue();
             }
         }
 
@@ -236,7 +236,7 @@ namespace DapperUnitOfWork.UnitTests.DbContexts
 
                 // Assert
                 dbcontext.Connection.State.Should().Be(ConnectionState.Closed);
-                dbcontext.IsTransactionNull.Should().Be(true);
+                dbcontext.IsTransactionNull.Should().BeTrue();
             }
         }
 
@@ -253,7 +253,7 @@ namespace DapperUnitOfWork.UnitTests.DbContexts
 
                 // Assert
                 dbcontext.Connection.State.Should().Be(ConnectionState.Closed);
-                dbcontext.IsTransactionNull.Should().Be(true);
+                dbcontext.IsTransactionNull.Should().BeTrue();
             }
         }
 
@@ -271,7 +271,7 @@ namespace DapperUnitOfWork.UnitTests.DbContexts
 
                 // Assert
                 dbcontext.Connection.State.Should().Be(ConnectionState.Open);
-                dbcontext.IsTransactionNull.Should().Be(true);
+                dbcontext.IsTransactionNull.Should().BeTrue();
             }
         }
     }

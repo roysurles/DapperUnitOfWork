@@ -34,6 +34,16 @@ namespace DapperUnitOfWork.Repositories
 
         public bool IsDisposed { get; private set; }
 
+        public bool IsLocalDbContextDisposed => _localDbContext.IsDisposed;
+
+        public bool? IsOverrideDbContextDisposed => _overrideDbContext?.IsDisposed;
+
+        public bool IsOverrideDbContextNull => _overrideDbContext == null;
+
+        public Guid LocalDbContextId => _localDbContext.Id;
+
+        public Guid? OverrideDbContextId => _overrideDbContext?.Id;
+
         public void OverrideDbContext(object dbContext)
         {
             if (_overrideDbContext != null)
