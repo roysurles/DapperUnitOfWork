@@ -12,9 +12,9 @@ namespace DapperUnitOfWork.UnitTests.DbContexts
         {
         }
 
-        [Fact(DisplayName = "DbConnectionString_EmptyString_ExceptionThrown")]
+        [Fact(DisplayName = "Ctor_DbConnectionStringIsEmptyString_ExceptionThrown")]
         [Trait("Category", "Unit")]
-        public void DbConnectionString_EmptyString_ExceptionThrown()
+        public void Ctor_DbConnectionStringIsEmptyString_ExceptionThrown()
         {
             // Arrange
             var metadata = new MissingDbConnectionStringDbContextMetadata();
@@ -27,16 +27,15 @@ namespace DapperUnitOfWork.UnitTests.DbContexts
             action.Should().Throw<ArgumentNullException>();
         }
 
-        [Fact(DisplayName = "Connection_AfterInstantiation_IsNull")]
+        [Fact(DisplayName = "Connection_AfterDbContextInstantiation_ConnectionIsNull")]
         [Trait("Category", "Unit")]
-        public void Connection_AfterInstantiation_IsNull()
+        public void Connection_AfterDbContextInstantiation_ConnectionIsNull()
         {
             // Arrange
-            var metadata = new SampleDatabaseDbContextMetadata();
-
-            // Act
-            using (var dbcontext = new SampleDatabaseDbContext(metadata))
+            using (var dbcontext = Container.GetInstance<ISampleDatabaseDbContext>())
             {
+                // Act
+
                 // Assert
                 dbcontext.IsConnectionNull.Should().Be(true);
             }
@@ -47,8 +46,7 @@ namespace DapperUnitOfWork.UnitTests.DbContexts
         public void Dispose_AllDisposablesAreDisposed()
         {
             // Arrange
-            var metadata = new SampleDatabaseDbContextMetadata();
-            var dbcontext = new SampleDatabaseDbContext(metadata);
+            var dbcontext = Container.GetInstance<ISampleDatabaseDbContext>();
             // ReSharper disable once AccessToDisposedClosure
             Action action = () => dbcontext.Connection.Close();
 
@@ -61,13 +59,12 @@ namespace DapperUnitOfWork.UnitTests.DbContexts
             dbcontext.IsTransactionNull.Should().Be(true);
         }
 
-        [Fact(DisplayName = "OpenConnection_ClosedState_ConnectionStateIsOpen")]
+        [Fact(DisplayName = "OpenConnection_ConnectionIsClosed_ConnectionIsOpen")]
         [Trait("Category", "Unit")]
-        public void OpenConnection_ClosedState_ConnectionStateIsOpen()
+        public void OpenConnection_ConnectionIsClosed_ConnectionIsOpen()
         {
             // Arrange
-            var metadata = new SampleDatabaseDbContextMetadata();
-            using (var dbcontext = new SampleDatabaseDbContext(metadata))
+            using (var dbcontext = Container.GetInstance<ISampleDatabaseDbContext>())
             {
                 // Act
                 dbcontext.OpenConnection();
@@ -77,13 +74,12 @@ namespace DapperUnitOfWork.UnitTests.DbContexts
             }
         }
 
-        [Fact(DisplayName = "OpenConnection_OpenState_ConnectionStateIsOpen")]
+        [Fact(DisplayName = "OpenConnection_ConnectionIsOpen_ConnectionStateIsOpen")]
         [Trait("Category", "Unit")]
-        public void OpenConnection_OpenState_ConnectionStateIsOpen()
+        public void OpenConnection_ConnectionIsOpen_ConnectionStateIsOpen()
         {
             // Arrange
-            var metadata = new SampleDatabaseDbContextMetadata();
-            using (var dbcontext = new SampleDatabaseDbContext(metadata))
+            using (var dbcontext = Container.GetInstance<ISampleDatabaseDbContext>())
             {
                 // Act
                 dbcontext.OpenConnection();
@@ -94,13 +90,12 @@ namespace DapperUnitOfWork.UnitTests.DbContexts
             }
         }
 
-        [Fact(DisplayName = "CloseConnection_OpenState_ConnectionStateIsClosed")]
+        [Fact(DisplayName = "CloseConnection_ConnectionIsOpen_ConnectionIsClosed")]
         [Trait("Category", "Unit")]
-        public void CloseConnection_OpenState_ConnectionStateIsClosed()
+        public void CloseConnection_ConnectionIsOpen_ConnectionIsClosed()
         {
             // Arrange
-            var metadata = new SampleDatabaseDbContextMetadata();
-            using (var dbcontext = new SampleDatabaseDbContext(metadata))
+            using (var dbcontext = Container.GetInstance<ISampleDatabaseDbContext>())
             {
                 // Act
                 dbcontext.OpenConnection();
@@ -111,13 +106,12 @@ namespace DapperUnitOfWork.UnitTests.DbContexts
             }
         }
 
-        [Fact(DisplayName = "CloseConnection_ClosedState_ConnectionStateIsClosed")]
+        [Fact(DisplayName = "CloseConnection_ConnectionIsClosed_ConnectionIsClosed")]
         [Trait("Category", "Unit")]
-        public void CloseConnection_ClosedState_ConnectionStateIsClosed()
+        public void CloseConnection_ConnectionIsClosed_ConnectionIsClosed()
         {
             // Arrange
-            var metadata = new SampleDatabaseDbContextMetadata();
-            using (var dbcontext = new SampleDatabaseDbContext(metadata))
+            using (var dbcontext = Container.GetInstance<ISampleDatabaseDbContext>())
             {
                 // Act
                 dbcontext.CloseConnection();
@@ -127,13 +121,12 @@ namespace DapperUnitOfWork.UnitTests.DbContexts
             }
         }
 
-        [Fact(DisplayName = "BeginTransaction_NotInTransactionAndConnectionClosed_ConnectionStateIsOpenAndTransactionIsNotNull")]
+        [Fact(DisplayName = "BeginTransaction_NotInTransactionAndConnectionIsClosed_ConnectionIsOpenAndTransactionIsNotNull")]
         [Trait("Category", "Unit")]
-        public void BeginTransaction_NotInTransactionAndConnectionClosed_ConnectionStateIsOpenAndTransactionIsNotNull()
+        public void BeginTransaction_NotInTransactionAndConnectionIsClosed_ConnectionIsOpenAndTransactionIsNotNull()
         {
             // Arrange
-            var metadata = new SampleDatabaseDbContextMetadata();
-            using (var dbcontext = new SampleDatabaseDbContext(metadata))
+            using (var dbcontext = Container.GetInstance<ISampleDatabaseDbContext>())
             {
                 // Act
                 dbcontext.BeginTransaction();
@@ -144,13 +137,12 @@ namespace DapperUnitOfWork.UnitTests.DbContexts
             }
         }
 
-        [Fact(DisplayName = "BeginTransaction_NotInTransactionAndConnectionOpen_ConnectionStateIsOpenAndTransactionIsNotNull")]
+        [Fact(DisplayName = "BeginTransaction_NotInTransactionAndConnectionIsOpen_ConnectionIsOpenAndTransactionIsNotNull")]
         [Trait("Category", "Unit")]
-        public void BeginTransaction_NotInTransactionAndConnectionOpen_ConnectionStateIsOpenAndTransactionIsNotNull()
+        public void BeginTransaction_NotInTransactionAndConnectionIsOpen_ConnectionIsOpenAndTransactionIsNotNull()
         {
             // Arrange
-            var metadata = new SampleDatabaseDbContextMetadata();
-            using (var dbcontext = new SampleDatabaseDbContext(metadata))
+            using (var dbcontext = Container.GetInstance<ISampleDatabaseDbContext>())
             {
                 // Act
                 dbcontext.OpenConnection();
@@ -162,13 +154,12 @@ namespace DapperUnitOfWork.UnitTests.DbContexts
             }
         }
 
-        [Fact(DisplayName = "BeginTransaction_NotInTransactionAndConnectionOpen_ConnectionStateIsOpenAndTransactionIsNotNull")]
+        [Fact(DisplayName = "BeginTransaction_InTransaction_ExceptionThrown")]
         [Trait("Category", "Unit")]
-        public void BeginTransaction_AlreadyInTransaction_ExceptionThrown()
+        public void BeginTransaction_InTransaction_ExceptionThrown()
         {
             // Arrange
-            var metadata = new SampleDatabaseDbContextMetadata();
-            using (var dbcontext = new SampleDatabaseDbContext(metadata))
+            using (var dbcontext = Container.GetInstance<ISampleDatabaseDbContext>())
             {
                 // ReSharper disable once AccessToDisposedClosure
                 Action action = () => dbcontext.BeginTransaction();
@@ -186,8 +177,7 @@ namespace DapperUnitOfWork.UnitTests.DbContexts
         public void CommitTransaction_NotInTransaction_ExceptionThrown()
         {
             // Arrange
-            var metadata = new SampleDatabaseDbContextMetadata();
-            using (var dbcontext = new SampleDatabaseDbContext(metadata))
+            using (var dbcontext = Container.GetInstance<ISampleDatabaseDbContext>())
             {
                 // ReSharper disable once AccessToDisposedClosure
                 Action action = () => dbcontext.CommitTransaction();
@@ -204,8 +194,7 @@ namespace DapperUnitOfWork.UnitTests.DbContexts
         public void CommitTransaction_InTransactionAndConnectionWasClosedPriorToBeginTransaction_ConnectionIsClosedAndTransactionIsNull()
         {
             // Arrange
-            var metadata = new SampleDatabaseDbContextMetadata();
-            using (var dbcontext = new SampleDatabaseDbContext(metadata))
+            using (var dbcontext = Container.GetInstance<ISampleDatabaseDbContext>())
             {
                 // Act
                 dbcontext.BeginTransaction();
@@ -222,8 +211,7 @@ namespace DapperUnitOfWork.UnitTests.DbContexts
         public void CommitTransaction_InTransactionAndConnectionWasOpenPriorToBeginTransaction_ConnectionIsOpenAndTransactionIsNull()
         {
             // Arrange
-            var metadata = new SampleDatabaseDbContextMetadata();
-            using (var dbcontext = new SampleDatabaseDbContext(metadata))
+            using (var dbcontext = Container.GetInstance<ISampleDatabaseDbContext>())
             {
                 // Act
                 dbcontext.OpenConnection();
@@ -236,13 +224,12 @@ namespace DapperUnitOfWork.UnitTests.DbContexts
             }
         }
 
-        [Fact(DisplayName = "RollbackTransaction_NotInTransactionAndConnectionWasClosed_ConnectionIsClosedAndTransactionIsNull")]
+        [Fact(DisplayName = "RollbackTransaction_NotInTransactionAndConnectionIsClosed_ConnectionIsClosedAndTransactionIsNull")]
         [Trait("Category", "Unit")]
-        public void RollbackTransaction_NotInTransactionAndConnectionWasClosed_ConnectionIsClosedAndTransactionIsNull()
+        public void RollbackTransaction_NotInTransactionAndConnectionIsClosed_ConnectionIsClosedAndTransactionIsNull()
         {
             // Arrange
-            var metadata = new SampleDatabaseDbContextMetadata();
-            using (var dbcontext = new SampleDatabaseDbContext(metadata))
+            using (var dbcontext = Container.GetInstance<ISampleDatabaseDbContext>())
             {
                 // Act
                 dbcontext.RollbackTransaction();
@@ -258,8 +245,7 @@ namespace DapperUnitOfWork.UnitTests.DbContexts
         public void RollbackTransaction_InTransactionAndConnectionWasClosedPriorToBeginTransaction_ConnectionIsClosedAndTransactionIsNull()
         {
             // Arrange
-            var metadata = new SampleDatabaseDbContextMetadata();
-            using (var dbcontext = new SampleDatabaseDbContext(metadata))
+            using (var dbcontext = Container.GetInstance<ISampleDatabaseDbContext>())
             {
                 // Act
                 dbcontext.BeginTransaction();
@@ -276,8 +262,7 @@ namespace DapperUnitOfWork.UnitTests.DbContexts
         public void RollbackTransaction_InTransactionAndConnectionWasOpenPriorToBeginTransaction_ConnectionIsOpenAndTransactionIsNull()
         {
             // Arrange
-            var metadata = new SampleDatabaseDbContextMetadata();
-            using (var dbcontext = new SampleDatabaseDbContext(metadata))
+            using (var dbcontext = Container.GetInstance<ISampleDatabaseDbContext>())
             {
                 // Act
                 dbcontext.OpenConnection();
