@@ -127,7 +127,7 @@ namespace DapperUnitOfWork.UnitOfWorks
             {
                 foreach (var repository in _repositories.Where(repository => repository.DbContextConcreteType == dbContext.GetType()))
                 {
-                    repository.OverrideDbContext(dbContext);
+                    repository.OverrideLocalDbContext(dbContext);
                 }
             }
         }

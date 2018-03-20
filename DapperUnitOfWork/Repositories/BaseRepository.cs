@@ -34,17 +34,7 @@ namespace DapperUnitOfWork.Repositories
 
         public bool IsDisposed { get; private set; }
 
-        public bool IsLocalDbContextDisposed => _localDbContext.IsDisposed;
-
-        public bool? IsOverrideDbContextDisposed => _overrideDbContext?.IsDisposed;
-
-        public bool IsOverrideDbContextNull => _overrideDbContext == null;
-
-        public Guid LocalDbContextId => _localDbContext.Id;
-
-        public Guid? OverrideDbContextId => _overrideDbContext?.Id;
-
-        public void OverrideDbContext(object dbContext)
+        public void OverrideLocalDbContext(object dbContext)
         {
             if (_overrideDbContext != null)
                 throw new InvalidOperationException($"{nameof(_overrideDbContext)} may only be set once per instance for this repository: {GetType().Name}.");

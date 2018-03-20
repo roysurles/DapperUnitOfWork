@@ -1,5 +1,6 @@
 ﻿using DapperUnitOfWork.UnitTests.DbContexts;
 using DapperUnitOfWork.UnitTests.Repositories;
+using DapperUnitOfWork.UnitTests.UnitOfWorks;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
 
@@ -20,10 +21,11 @@ namespace DapperUnitOfWork.UnitTests.IoC
             container.RegisterDisposableTransient<ISampleDatabaseDbContext, SampleDatabaseDbContext>();
 
             // Repositories            
-            container.RegisterDisposableTransient<ISampleDatabaseRepository, SampleDatabaseRepository>();
+            container.RegisterDisposableTransient<ISampleRepository, SampleRepository>();
+            container.RegisterDisposableTransient<ISampleRepository2, SampleRepository2>();
 
             // Unit of Works
-
+            container.RegisterDisposableTransient<ISampleSingleDbContextUnitOfWork, SampleSingleDbContextUnitOfWork>();
 
             // Optionally verify the container.
             container.Verify();
