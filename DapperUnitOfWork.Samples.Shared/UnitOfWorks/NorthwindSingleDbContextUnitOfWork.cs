@@ -1,12 +1,12 @@
-﻿using DapperUnitOfWork.Samples.Shared.DataAccess.DbContexts;
-using DapperUnitOfWork.Samples.Shared.DataAccess.Models;
-using DapperUnitOfWork.Samples.Shared.DataAccess.Repositories;
+﻿using DapperUnitOfWork.Samples.Shared.DbContexts;
+using DapperUnitOfWork.Samples.Shared.Models;
+using DapperUnitOfWork.Samples.Shared.Repositories;
 using DapperUnitOfWork.UnitOfWorks;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DapperUnitOfWork.Samples.Shared.DataAccess.UnitOfWorks
+namespace DapperUnitOfWork.Samples.Shared.UnitOfWorks
 {
     /// <summary>
     /// Sample single DbContext unit of work

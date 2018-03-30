@@ -1,4 +1,4 @@
-﻿namespace DapperUnitOfWork.Samples.Shared.DataAccess.Models
+﻿namespace DapperUnitOfWork.Samples.Shared.Models
 {
     public class CategoryModel
     {

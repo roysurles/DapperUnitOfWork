@@ -1,6 +1,6 @@
 ﻿using DapperUnitOfWork.DbContexts;
 
-namespace DapperUnitOfWork.Samples.Shared.DataAccess.DbContexts
+namespace DapperUnitOfWork.Samples.Shared.DbContexts
 {
     public class NorthwindDbContextMetadata : INorthwindDbContextMetadata
     {

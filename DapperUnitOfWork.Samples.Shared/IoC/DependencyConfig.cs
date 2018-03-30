@@ -1,6 +1,6 @@
-﻿using DapperUnitOfWork.Samples.Shared.DataAccess.DbContexts;
-using DapperUnitOfWork.Samples.Shared.DataAccess.Repositories;
-using DapperUnitOfWork.Samples.Shared.DataAccess.UnitOfWorks;
+﻿using DapperUnitOfWork.Samples.Shared.DbContexts;
+using DapperUnitOfWork.Samples.Shared.Repositories;
+using DapperUnitOfWork.Samples.Shared.UnitOfWorks;
 using SimpleInjector;
 
 namespace DapperUnitOfWork.Samples.Shared.IoC

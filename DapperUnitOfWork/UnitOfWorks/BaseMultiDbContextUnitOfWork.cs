@@ -47,7 +47,7 @@ namespace DapperUnitOfWork.UnitOfWorks
         protected void RegisterDbContexts(params IBaseDbContext<DbConnection, DbTransaction>[] dbContexts)
         {
             _dbContexts = dbContexts;
-            OverrideDbContexts();
+            OverrideRespoitoriesLocalDbContexts();
         }
         /// <summary>
         /// Keeps an internal array of Repositories for IDisposable.Dispose() and to be overriden with the corresponding DbContext.
@@ -56,7 +56,7 @@ namespace DapperUnitOfWork.UnitOfWorks
         protected void RegisterRepositories(params IBaseRepository[] repositories)
         {
             _repositories = repositories;
-            OverrideDbContexts();
+            OverrideRespoitoriesLocalDbContexts();
         }
 
         /// <summary>
@@ -116,7 +116,7 @@ namespace DapperUnitOfWork.UnitOfWorks
         protected static void RollbackTransactionFor(params IBaseDbContext<DbConnection, DbTransaction>[] dbContexts) =>
             InvokeDbContextAction(dbContext => dbContext.RollbackTransaction(), dbContexts);
 
-        private void OverrideDbContexts()
+        private void OverrideRespoitoriesLocalDbContexts()
         {
             if (_dbContexts == null || !_dbContexts.Any())
                 return;

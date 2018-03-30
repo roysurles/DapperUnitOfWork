@@ -1,4 +1,4 @@
-﻿namespace DapperUnitOfWork.Samples.Shared.DataAccess.SqlStrings
+﻿namespace DapperUnitOfWork.Samples.Shared.SqlStrings
 {
     internal static class CategoryNorthwindSqlStrings
     {
