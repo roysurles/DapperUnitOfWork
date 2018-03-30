@@ -26,6 +26,6 @@ namespace DapperUnitOfWork.Repositories
         /// Ovveride the local DbContext.
         /// </summary>
         /// <param name="dbContext"></param>
-        void OverrideDbContext(object dbContext);
+        void OverrideLocalDbContext(object dbContext);
     }
 }
