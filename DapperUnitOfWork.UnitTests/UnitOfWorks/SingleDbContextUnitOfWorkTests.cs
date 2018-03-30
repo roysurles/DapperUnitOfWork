@@ -4,40 +4,27 @@ using System.Data;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace DapperUnitOfWork.UnitTests.DbContexts
+namespace DapperUnitOfWork.UnitTests.UnitOfWorks
 {
-    public class DbContextTests : BaseTest
+    public class SingleDbContextUnitOfWorkTests : BaseTest
     {
-        public DbContextTests(ITestOutputHelper output) : base(output)
+        public SingleDbContextUnitOfWorkTests(ITestOutputHelper output) : base(output)
         {
         }
 
-        [Fact(DisplayName = "Ctor_DbConnectionStringIsEmptyString_ExceptionThrown")]
+        [Fact(DisplayName = "Ctor_AllRepositoriesHaveSameDbContext")]
         [Trait("Category", "Unit")]
-        public void Ctor_DbConnectionStringIsEmptyString_ExceptionThrown()
+        public void Ctor_AllRepositoriesHaveSameDbContext()
         {
             // Arrange
-            var metadata = new MissingDbConnectionStringDbContextMetadata();
-            // ReSharper disable once ObjectCreationAsStatement
-            Action action = () => new MissingDbConnectionStringDbContext(metadata);
-
-            // Act
-
-            // Assert            
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact(DisplayName = "Connection_AfterDbContextInstantiation_ConnectionIsNull")]
-        [Trait("Category", "Unit")]
-        public void Connection_AfterDbContextInstantiation_ConnectionIsNull()
-        {
-            // Arrange
-            using (var dbcontext = Container.GetInstance<ISampleDatabaseDbContext>())
+            using (var uow = Container.GetInstance<ISampleSingleDbContextUnitOfWork>())
             {
                 // Act
 
-                // Assert
-                dbcontext.IsConnectionNull.Should().BeTrue();
+                // Assert                
+                uow.DbContext.IsConnectionNull.Should().BeTrue();
+                uow.SampleRepository.DbContext.Should().Be(uow.DbContext);
+                uow.SampleRepository2.DbContext.Should().Be(uow.DbContext);
             }
         }
 
@@ -46,17 +33,15 @@ namespace DapperUnitOfWork.UnitTests.DbContexts
         public void Dispose_AllDisposablesAreDisposed()
         {
             // Arrange
-            var dbcontext = Container.GetInstance<ISampleDatabaseDbContext>();
-            // ReSharper disable once AccessToDisposedClosure
-            Action action = () => dbcontext.Connection.Close();
+            var uow = Container.GetInstance<ISampleSingleDbContextUnitOfWork>();
 
             // Act
-            dbcontext.Dispose();
+            uow.Dispose();
 
             // Assert
-            dbcontext.IsDisposed.Should().BeTrue();
-            action.Should().Throw<InvalidOperationException>();
-            dbcontext.IsTransactionNull.Should().BeTrue();
+            uow.DbContext.IsDisposed.Should().BeTrue();
+            uow.SampleRepository.IsDisposed.Should().BeTrue();
+            uow.SampleRepository2.IsDisposed.Should().BeTrue();
         }
 
         [Fact(DisplayName = "OpenConnection_ConnectionIsClosed_ConnectionIsOpen")]
@@ -64,13 +49,13 @@ namespace DapperUnitOfWork.UnitTests.DbContexts
         public void OpenConnection_ConnectionIsClosed_ConnectionIsOpen()
         {
             // Arrange
-            using (var dbcontext = Container.GetInstance<ISampleDatabaseDbContext>())
+            using (var uow = Container.GetInstance<ISampleSingleDbContextUnitOfWork>())
             {
                 // Act
-                dbcontext.OpenConnection();
+                uow.DbContext.OpenConnection();
 
                 // Assert
-                dbcontext.Connection.State.Should().Be(ConnectionState.Open);
+                uow.DbContext.Connection.State.Should().Be(ConnectionState.Open);
             }
         }
 
@@ -79,14 +64,14 @@ namespace DapperUnitOfWork.UnitTests.DbContexts
         public void OpenConnection_ConnectionIsOpen_ConnectionIsOpen()
         {
             // Arrange
-            using (var dbcontext = Container.GetInstance<ISampleDatabaseDbContext>())
+            using (var uow = Container.GetInstance<ISampleSingleDbContextUnitOfWork>())
             {
                 // Act
-                dbcontext.OpenConnection();
-                dbcontext.OpenConnection();
+                uow.DbContext.OpenConnection();
+                uow.DbContext.OpenConnection();
 
                 // Assert
-                dbcontext.Connection.State.Should().Be(ConnectionState.Open);
+                uow.DbContext.Connection.State.Should().Be(ConnectionState.Open);
             }
         }
 
@@ -95,14 +80,14 @@ namespace DapperUnitOfWork.UnitTests.DbContexts
         public void CloseConnection_ConnectionIsOpen_ConnectionIsClosed()
         {
             // Arrange
-            using (var dbcontext = Container.GetInstance<ISampleDatabaseDbContext>())
+            using (var uow = Container.GetInstance<ISampleSingleDbContextUnitOfWork>())
             {
                 // Act
-                dbcontext.OpenConnection();
-                dbcontext.CloseConnection();
+                uow.DbContext.OpenConnection();
+                uow.DbContext.CloseConnection();
 
                 // Assert
-                dbcontext.Connection.State.Should().Be(ConnectionState.Closed);
+                uow.DbContext.Connection.State.Should().Be(ConnectionState.Closed);
             }
         }
 
@@ -111,13 +96,13 @@ namespace DapperUnitOfWork.UnitTests.DbContexts
         public void CloseConnection_ConnectionIsClosed_ConnectionIsClosed()
         {
             // Arrange
-            using (var dbcontext = Container.GetInstance<ISampleDatabaseDbContext>())
+            using (var uow = Container.GetInstance<ISampleSingleDbContextUnitOfWork>())
             {
                 // Act
-                dbcontext.CloseConnection();
+                uow.DbContext.CloseConnection();
 
                 // Assert
-                dbcontext.Connection.State.Should().Be(ConnectionState.Closed);
+                uow.DbContext.Connection.State.Should().Be(ConnectionState.Closed);
             }
         }
 
@@ -126,14 +111,14 @@ namespace DapperUnitOfWork.UnitTests.DbContexts
         public void BeginTransaction_NotInTransactionAndConnectionIsClosed_ConnectionIsOpenAndTransactionIsNotNull()
         {
             // Arrange
-            using (var dbcontext = Container.GetInstance<ISampleDatabaseDbContext>())
+            using (var uow = Container.GetInstance<ISampleSingleDbContextUnitOfWork>())
             {
                 // Act
-                dbcontext.BeginTransaction();
+                uow.DbContext.BeginTransaction();
 
                 // Assert
-                dbcontext.Connection.State.Should().Be(ConnectionState.Open);
-                dbcontext.Transaction.Should().NotBeNull();
+                uow.DbContext.Connection.State.Should().Be(ConnectionState.Open);
+                uow.DbContext.Transaction.Should().NotBeNull();
             }
         }
 
@@ -149,15 +134,15 @@ namespace DapperUnitOfWork.UnitTests.DbContexts
         public void BeginTransactionWithIsolationLevel_NotInTransactionAndConnectionIsClosed_ConnectionIsOpenAndTransactionIsNotNullWithIsolationLevel(IsolationLevel expectedIsolationLevel, IsolationLevel actualIsolationLevel)
         {
             // Arrange
-            using (var dbcontext = Container.GetInstance<ISampleDatabaseDbContext>())
+            using (var uow = Container.GetInstance<ISampleSingleDbContextUnitOfWork>())
             {
                 // Act
-                dbcontext.BeginTransaction(expectedIsolationLevel);
+                uow.DbContext.BeginTransaction(expectedIsolationLevel);
 
                 // Assert
-                dbcontext.Connection.State.Should().Be(ConnectionState.Open);
-                dbcontext.Transaction.Should().NotBeNull();
-                dbcontext.Transaction.IsolationLevel.Should().Be(actualIsolationLevel);
+                uow.DbContext.Connection.State.Should().Be(ConnectionState.Open);
+                uow.DbContext.Transaction.Should().NotBeNull();
+                uow.DbContext.Transaction.IsolationLevel.Should().Be(actualIsolationLevel);
             }
         }
 
@@ -166,15 +151,15 @@ namespace DapperUnitOfWork.UnitTests.DbContexts
         public void BeginTransaction_NotInTransactionAndConnectionIsOpen_ConnectionIsOpenAndTransactionIsNotNull()
         {
             // Arrange
-            using (var dbcontext = Container.GetInstance<ISampleDatabaseDbContext>())
+            using (var uow = Container.GetInstance<ISampleSingleDbContextUnitOfWork>())
             {
                 // Act
-                dbcontext.OpenConnection();
-                dbcontext.BeginTransaction();
+                uow.DbContext.OpenConnection();
+                uow.DbContext.BeginTransaction();
 
                 // Assert
-                dbcontext.Connection.State.Should().Be(ConnectionState.Open);
-                dbcontext.Transaction.Should().NotBeNull();
+                uow.DbContext.Connection.State.Should().Be(ConnectionState.Open);
+                uow.DbContext.Transaction.Should().NotBeNull();
             }
         }
 
@@ -183,13 +168,13 @@ namespace DapperUnitOfWork.UnitTests.DbContexts
         public void BeginTransaction_InTransaction_ExceptionThrown()
         {
             // Arrange
-            using (var dbcontext = Container.GetInstance<ISampleDatabaseDbContext>())
+            using (var uow = Container.GetInstance<ISampleSingleDbContextUnitOfWork>())
             {
                 // ReSharper disable once AccessToDisposedClosure
-                Action action = () => dbcontext.BeginTransaction();
+                Action action = () => uow.DbContext.BeginTransaction();
 
                 // Act
-                dbcontext.BeginTransaction();
+                uow.DbContext.BeginTransaction();
 
                 // Assert
                 action.Should().Throw<InvalidOperationException>();
@@ -201,10 +186,10 @@ namespace DapperUnitOfWork.UnitTests.DbContexts
         public void CommitTransaction_NotInTransaction_ExceptionThrown()
         {
             // Arrange
-            using (var dbcontext = Container.GetInstance<ISampleDatabaseDbContext>())
+            using (var uow = Container.GetInstance<ISampleSingleDbContextUnitOfWork>())
             {
                 // ReSharper disable once AccessToDisposedClosure
-                Action action = () => dbcontext.CommitTransaction();
+                Action action = () => uow.DbContext.CommitTransaction();
 
                 // Act
 
@@ -218,15 +203,15 @@ namespace DapperUnitOfWork.UnitTests.DbContexts
         public void CommitTransaction_InTransactionAndConnectionWasClosedPriorToBeginTransaction_ConnectionIsClosedAndTransactionIsNull()
         {
             // Arrange
-            using (var dbcontext = Container.GetInstance<ISampleDatabaseDbContext>())
+            using (var uow = Container.GetInstance<ISampleSingleDbContextUnitOfWork>())
             {
                 // Act
-                dbcontext.BeginTransaction();
-                dbcontext.CommitTransaction();
+                uow.DbContext.BeginTransaction();
+                uow.DbContext.CommitTransaction();
 
                 // Assert
-                dbcontext.Connection.State.Should().Be(ConnectionState.Closed);
-                dbcontext.IsTransactionNull.Should().BeTrue();
+                uow.DbContext.Connection.State.Should().Be(ConnectionState.Closed);
+                uow.DbContext.IsTransactionNull.Should().BeTrue();
             }
         }
 
@@ -235,16 +220,16 @@ namespace DapperUnitOfWork.UnitTests.DbContexts
         public void CommitTransaction_InTransactionAndConnectionWasOpenPriorToBeginTransaction_ConnectionIsOpenAndTransactionIsNull()
         {
             // Arrange
-            using (var dbcontext = Container.GetInstance<ISampleDatabaseDbContext>())
+            using (var uow = Container.GetInstance<ISampleSingleDbContextUnitOfWork>())
             {
                 // Act
-                dbcontext.OpenConnection();
-                dbcontext.BeginTransaction();
-                dbcontext.CommitTransaction();
+                uow.DbContext.OpenConnection();
+                uow.DbContext.BeginTransaction();
+                uow.DbContext.CommitTransaction();
 
                 // Assert
-                dbcontext.Connection.State.Should().Be(ConnectionState.Open);
-                dbcontext.IsTransactionNull.Should().BeTrue();
+                uow.DbContext.Connection.State.Should().Be(ConnectionState.Open);
+                uow.DbContext.IsTransactionNull.Should().BeTrue();
             }
         }
 
@@ -253,14 +238,14 @@ namespace DapperUnitOfWork.UnitTests.DbContexts
         public void RollbackTransaction_NotInTransactionAndConnectionIsClosed_ConnectionIsClosedAndTransactionIsNull()
         {
             // Arrange
-            using (var dbcontext = Container.GetInstance<ISampleDatabaseDbContext>())
+            using (var uow = Container.GetInstance<ISampleSingleDbContextUnitOfWork>())
             {
                 // Act
-                dbcontext.RollbackTransaction();
+                uow.DbContext.RollbackTransaction();
 
                 // Assert
-                dbcontext.Connection.State.Should().Be(ConnectionState.Closed);
-                dbcontext.IsTransactionNull.Should().BeTrue();
+                uow.DbContext.Connection.State.Should().Be(ConnectionState.Closed);
+                uow.DbContext.IsTransactionNull.Should().BeTrue();
             }
         }
 
@@ -269,15 +254,15 @@ namespace DapperUnitOfWork.UnitTests.DbContexts
         public void RollbackTransaction_InTransactionAndConnectionWasClosedPriorToBeginTransaction_ConnectionIsClosedAndTransactionIsNull()
         {
             // Arrange
-            using (var dbcontext = Container.GetInstance<ISampleDatabaseDbContext>())
+            using (var uow = Container.GetInstance<ISampleSingleDbContextUnitOfWork>())
             {
                 // Act
-                dbcontext.BeginTransaction();
-                dbcontext.RollbackTransaction();
+                uow.DbContext.BeginTransaction();
+                uow.DbContext.RollbackTransaction();
 
                 // Assert
-                dbcontext.Connection.State.Should().Be(ConnectionState.Closed);
-                dbcontext.IsTransactionNull.Should().BeTrue();
+                uow.DbContext.Connection.State.Should().Be(ConnectionState.Closed);
+                uow.DbContext.IsTransactionNull.Should().BeTrue();
             }
         }
 
@@ -286,16 +271,16 @@ namespace DapperUnitOfWork.UnitTests.DbContexts
         public void RollbackTransaction_InTransactionAndConnectionWasOpenPriorToBeginTransaction_ConnectionIsOpenAndTransactionIsNull()
         {
             // Arrange
-            using (var dbcontext = Container.GetInstance<ISampleDatabaseDbContext>())
+            using (var uow = Container.GetInstance<ISampleSingleDbContextUnitOfWork>())
             {
                 // Act
-                dbcontext.OpenConnection();
-                dbcontext.BeginTransaction();
-                dbcontext.RollbackTransaction();
+                uow.DbContext.OpenConnection();
+                uow.DbContext.BeginTransaction();
+                uow.DbContext.RollbackTransaction();
 
                 // Assert
-                dbcontext.Connection.State.Should().Be(ConnectionState.Open);
-                dbcontext.IsTransactionNull.Should().BeTrue();
+                uow.DbContext.Connection.State.Should().Be(ConnectionState.Open);
+                uow.DbContext.IsTransactionNull.Should().BeTrue();
             }
         }
     }

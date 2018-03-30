@@ -1,7 +1,7 @@
 ﻿using DapperUnitOfWork.DbContexts;
 using System.Data.SqlClient;
 
-namespace DapperUnitOfWork.Samples.Shared.DataAccess.DbContexts
+namespace DapperUnitOfWork.Samples.Shared.DbContexts
 {
     public class NorthwindDbContext : BaseDbContext<SqlConnection, SqlTransaction>, INorthwindDbContext
     {

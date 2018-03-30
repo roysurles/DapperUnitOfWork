@@ -27,7 +27,7 @@ namespace DapperUnitOfWork.UnitOfWorks
 
             _repositories = repositories;
             foreach (var repository in _repositories)
-                repository.OverrideDbContext(_dbContext);
+                repository.OverrideLocalDbContext(_dbContext);
         }
 
         public void Dispose()

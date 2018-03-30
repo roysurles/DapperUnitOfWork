@@ -3,10 +3,14 @@ using System.Data.SqlClient;
 
 namespace DapperUnitOfWork.UnitTests.DbContexts
 {
-    public class MissingDbConnectionStringDbContext : BaseDbContext<SqlConnection, SqlTransaction>
+    public class MissingDbConnectionStringDbContext : BaseDbContext<SqlConnection, SqlTransaction>, IMissingDbConnectionStringDbContext
     {
-        public MissingDbConnectionStringDbContext(IDbContextMetadata metadata) : base(metadata)
+        public MissingDbConnectionStringDbContext(IMissingDbConnectionStringDbContextMetadata metadata) : base(metadata)
         {
         }
+    }
+
+    public interface IMissingDbConnectionStringDbContext : IBaseDbContext<SqlConnection, SqlTransaction>
+    {
     }
 }

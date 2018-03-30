@@ -1,12 +1,12 @@
 ﻿using Dapper;
 using DapperUnitOfWork.Repositories;
-using DapperUnitOfWork.Samples.Shared.DataAccess.DbContexts;
-using DapperUnitOfWork.Samples.Shared.DataAccess.Models;
-using DapperUnitOfWork.Samples.Shared.DataAccess.SqlStrings;
+using DapperUnitOfWork.Samples.Shared.DbContexts;
+using DapperUnitOfWork.Samples.Shared.Models;
+using DapperUnitOfWork.Samples.Shared.SqlStrings;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace DapperUnitOfWork.Samples.Shared.DataAccess.Repositories
+namespace DapperUnitOfWork.Samples.Shared.Repositories
 {
     /// <summary>
     /// Sample repository for the 'Categories' table / domain in the Northwind database

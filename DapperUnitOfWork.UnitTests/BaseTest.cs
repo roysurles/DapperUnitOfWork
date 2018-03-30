@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DapperUnitOfWork.UnitTests.IoC;
+using SimpleInjector;
+using System;
 using Xunit.Abstractions;
 
 namespace DapperUnitOfWork.UnitTests
@@ -8,6 +10,7 @@ namespace DapperUnitOfWork.UnitTests
         protected BaseTest(ITestOutputHelper output)
         {
             Output = output;
+            Container = DependencyConfig.BuildContainer();
         }
 
         public void Dispose()
@@ -22,13 +25,15 @@ namespace DapperUnitOfWork.UnitTests
 
             if (disposing)
             {
-                // dispose IDisposables here
+                Container?.Dispose();
             }
 
             IsDisposed = true;
         }
 
         public bool IsDisposed { get; private set; }
+
+        public Container Container { get; }
 
         public ITestOutputHelper Output { get; }
     }
